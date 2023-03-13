@@ -1,6 +1,7 @@
 //IntroductionToOOP
 #include<iostream>
 using namespace std;
+#define delimiter "\n----------------------------------------------------------\n"
 
 //КЛАСС - это тип данных!!!
 //СТРУКТУРА - это тип данных!!!
@@ -46,13 +47,28 @@ public:
 		this->y = y;
 		cout << "Constructor:\t" << this << endl;
 	}
+	Point(const Point& other)     //Конструктор копирования
+	{
+		this->x = other.x;
+		this->y = other.y;
+		cout << "CopyConstructor:" << this << endl;
+	}
 	~Point()
 	{
 		cout << "Destructor:\t" << this << endl;
 	}
-	//      Method
-	double distance(Point other)const
+	//		Operators:
+	Point operator =(const Point& other)    //Оператор присвоения
 	{
+		this->x = other.x;
+		this->y = other.y;
+		cout << "CopyAssignment:\t" << this << endl;   
+		return *this;
+	}
+	//      Method
+	double distance(const Point& other)const    //& -передача парметров по ссылке , & - оператор взятия адреса. Чтобы нельзя было измениьб(защитить), нужно передавать по константной ссылке 'const Point& other'
+	{
+		//other.x *= 125;  //При передаче параметров по ссылке, значение может изменяться
 		double x_distance = this->x - other.x;
 		double y_distance = this->y - other.y;
 		double distance = sqrt(x_distance * x_distance + y_distance * y_distance);
@@ -64,7 +80,7 @@ public:
 	}
 };
 
-double distance(Point A, Point B)
+double distance(const Point& A, const Point& B)
 {
 	double x_distance = A.get_x() - B.get_x();
 	double y_distance = A.get_y() - B.get_y();
@@ -74,6 +90,9 @@ double distance(Point A, Point B)
 
 //#define STRUCT_POINT
 //#define DISTANCE_CHECK
+//#define CONSTRUCTORS_CHECK
+//#define ASSIGNMENT_CHECK_1
+#define ASSIGNMENT_CHECK_2
 void main()
 {
 	setlocale(LC_ALL, "");
@@ -98,12 +117,13 @@ void main()
 	Point B;
 	B.set_x(7);
 	B.set_y(8);
-	cout << A.get_x() << "\t" << A.get_y() << endl;
-	cout << "Расстояние от точки А до точки В: " << A.distance(B) << endl;
-	cout << "Расстояние от точки B до точки A: " << B.distance(A) << endl;
-	cout << "Расстояние между точками B до точки A: " << distance(A,B) << endl;
-	cout << "Расстояние между точками А до точки A: " << distance(A,A) << endl;
+	cout << A.get_x() << "\t" << A.get_y() << endl; cout << delimiter << endl;
+	cout << "Расстояние от точки А до точки В: " << A.distance(B) << endl; cout << delimiter << endl;
+	cout << "Расстояние от точки B до точки A: " << B.distance(A) << endl; cout << delimiter << endl;
+	cout << "Расстояние между точками B до точки A: " << distance(A,B) << endl; cout << delimiter << endl;
+	cout << "Расстояние между точками А до точки A: " << distance(B,A) << endl; cout << delimiter << endl;
 #endif // DISTANCE_CHECK
+#ifdef  CONSTRUCTORS_CHECK
 	Point A; //Default constructor
 	//cout << A.get_x() << "\t" << A.get_y() << endl;
 	A.print();
@@ -113,6 +133,27 @@ void main()
 
 	Point C = 4; //Single-Argument constructor
 	C.print();
+
+	Point D = C; // Copy constructor
+	D.print();
+#endif // CONSTRUCTORS_CHECK
+#ifdef ASSIGNMENT_CHECK_1
+	//CopyAssignment
+	Point A(2, 3);
+	A.print();
+	Point B = A;	//CopyConstructor
+	B.print();
+	Point C;		//DefaultConstructor
+	C = B;			//Assignment operator (CopyAssignment)
+	C.print();
+#endif // ASSIGNMENT_CHECK_1
+#ifdef ASSIGNMENT_CHECK_2
+	int a, b, c;
+	a = b = c = 0;
+	Point A, B, C;
+	A = B = C = Point(2, 3);
+
+#endif // ASSIGNMENT_CHECK_2
 }
 
 
@@ -174,4 +215,17 @@ this -> - это указатель на объект для которого вызывается метод.
 	Если мы хотим определять каким будет объект при его создании, то нужен Конструктор с параметрами.
 	Особое место в параметризованных конструкторах занимает конструктор с обдим параметром- Point C = 4; //Single-Argument constructor
 	Конструктор с параметрами по умолчанию может быть универсальным и вызываться во всех ситуациях для создания объекта. Но иногда, лучше перегрузить конструктор, чем использовать универсальный конструктор.
+  
+ 23.01.2023 (movie 7) Конструктор копирования -конструктор, который копирует объект, а именно создаваемый объект делает точной копией копируемого объекта.
+ Конструктор копирования всегда принимает константную ссылку на объект нашего класса. Он всякий раз не явно вызывается, когда нужно копировать объект. 
+Point D = С; // Copy constructor
+ Также, как и конструктор по умолчанию, Контруктор копирования может быть не явным. То есть, если мы его не написали, компилятор сам его добавит. 
+ Конструктор копирования особенно важен при использовании в классе динамической памяти. Он должен выполнять так называемое DeepCopy (побитовое копирование, побайтовое копирование, поэлементное копирование).
+Не явный конструктор копирования не может этого сделать и выполняет ShallowCopy (поверхностное копирование), т.е копирование адреса памяти вместо содержимого памяти.
+	Если возникает скопировать сузествуюзий объект после его создания, а именно , существующий объект сделать точной копией другого сузествуюзего объекта, для этих целей мы не сможем вызвать конструктор копирования. 
+Потому, что люой конструктор может быть вызван ,только для создания объета. Конструктор не возможно вызвать после созданя объекта. 
+Ждя того, чтобы скопирвоать сузествуюзий объект, вызывается опироватор присваивания, или же CopyAssignment. Оператор присваивания делает тоже самое ,что и конструктор копирования, но после создания объекта (для существуюзего объекта).
+Так же как и конструктор копирования оператор присваивания принимает константную ссылку на объект и выполняет теже действия,что и конструктор копировани, но уже для сузествующего объекта.
+Так же как и конструктор копирвоания оператор присваивания критически важен ,если в классе используется динамическая память. И он также может быть не явным.
+Так же как и конструктор копирвоания оператор присваивания должен выполнять DeepCopy.
   */
