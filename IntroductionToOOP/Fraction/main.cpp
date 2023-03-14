@@ -1,4 +1,4 @@
-п»ї//Fraction
+//Fraction
 #include<iostream>
 using namespace std;
 #define delimiter "\n----------------------------------------------------------\n"
@@ -11,9 +11,9 @@ Fraction operator-(Fraction left, Fraction right);
 
 class Fraction
 {
-	int integer;		//С†РµР»Р°СЏ С‡Р°СЃС‚СЊ
-	int numerator;		//С‡РёСЃР»РёС‚РµР»СЊ
-	int denominator;	//Р·РЅР°РјРµРЅР°С‚РµР»СЊ
+	int integer;		//целая часть
+	int numerator;		//числитель
+	int denominator;	//знаменатель
 public:
 	int get_integer()const
 	{
@@ -41,28 +41,28 @@ public:
 		else this->denominator = denominator;
 	}
 	//				Constructors:
-	Fraction()			//РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
+	Fraction()			//Конструктор по умолчанию
 	{
 		this->integer = 0;
 		this->numerator = 0;
 		this->denominator = 1;
 		cout << "DefaultConstructor:\t" << this << endl;
 	}
-	Fraction(int integer)   //РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РѕРґРЅРёРј РїР°СЂР°РјРµС‚СЂРѕРј
+	Fraction(int integer)   //Конструктор с одним параметром
 	{
 		this->integer = integer;
 		this->numerator = 0;
 		this->denominator = 1;
 		cout << "1ArgConstructor:\t" << this << endl;
 	}
-	Fraction(int numerator, int denominator)   //РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РґРІРµРјСЏ РїР°СЂР°РјРµС‚СЂРѕРј
+	Fraction(int numerator, int denominator)   //Конструктор с двемя параметром
 	{
 		this->integer = 0;
 		this->numerator = numerator;
 		this->set_denominator(denominator);
 		cout << "2ArgConstructor:\t" << this << endl;
 	}
-	//Fraction(int integer = 0, int numerator = 0, int denominator = 1)   //РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ РїР°СЂР°РјРµС‚СЂР°РјРё. =0 Рё С‚Рґ РѕРЅ РєРѕРЅС„Р»РёРєС‚СѓРµС‚ СЃ РґСЂСѓРіРёРјРё РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂР°РјРё, С‚.Рє РјРѕР¶РµС‚ Р±С‹С‚СЊ РІС‹С‰РІР°РЅ РїСЂРё Р»СЋР±РѕРј СЃРѕР·РґР°РЅРёРё РѕР±СЉРµРєС‚Р°. РџРѕСЌС‚РѕРјСѓ СѓР±РµСЂРµРј РµРіРѕ РёСЃС…РѕРґРЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ.
+	//Fraction(int integer = 0, int numerator = 0, int denominator = 1)   //конструктор с параметрами. =0 и тд он конфликтует с другими конструкторами, т.к может быть выщван при любом создании объекта. Поэтому уберем его исходные значения.
 	Fraction(int integer, int numerator, int denominator)
 	{
 		this->integer = integer;
@@ -70,7 +70,7 @@ public:
 		this->set_denominator(denominator);
 		cout << "Constructor:\t\t" << this << endl;
 	}
-	Fraction(const Fraction& other)      //РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєРѕРїРёСЂРѕРІР°РЅРёСЏ
+	Fraction(const Fraction& other)      //Конструктор копирования
 	{
 		this->integer = other.integer;
 		this->numerator = other.numerator;
@@ -82,7 +82,7 @@ public:
 		cout << "Destructor:\t\t" << this << endl;
 	}
 	//				Operators:
-	Fraction& operator=(const Fraction& other)               //РћРїРµСЂР°С‚РѕСЂ =
+	Fraction& operator=(const Fraction& other)               //Оператор =
 	{
 		this->integer = other.integer;
 		this->numerator = other.numerator;
@@ -119,14 +119,14 @@ public:
 		numerator %= denominator;
 		return *this;
 	}
-	Fraction inverted()const          //Р­С‚РѕС‚ РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РїРµСЂРµРІРµСЂРЅСѓС‚СѓСЋ РґСЂРѕР±СЊ
+	Fraction inverted()const          //Этот метод возвращает перевернутую дробь
 	{
 		Fraction inverted = *this;
 		inverted.to_improper();
 		swap(inverted.numerator, inverted.denominator);
 		return inverted;
 	}
-	Fraction& reduce()					//РђР»РіРѕСЂРёС‚Рј СЃРѕРєСЂР°С‰РµРЅРёСЏ РґСЂРѕР±РµР№ (Р•РІРєР»РёРґР°)
+	Fraction& reduce()					//Алгоритм сокращения дробей (Евклида)
 	{
 		int more, less, rest = 0;
 		if (numerator > denominator)more = numerator, less = denominator;
@@ -137,7 +137,7 @@ public:
 			more = less;
 			less = rest;
 		} while (rest);
-		int GCD = more;					//GCD - Greates Common Divisor (РќР°РёР±РѕР»СЊС€РёР№ РѕР±С‰РёР№ РґРµР»РёС‚РµР»СЊ)
+		int GCD = more;					//GCD - Greates Common Divisor (Наибольший общий делитель)
 		numerator /= GCD;
 		denominator /= GCD;
 		return *this;
@@ -156,32 +156,32 @@ public:
 	}
 };
 
-Fraction operator*(Fraction left, Fraction right)    //РћРїРµСЂР°С‚РѕСЂ *
+Fraction operator*(Fraction left, Fraction right)    //Оператор *
 {
 	left.to_improper();
 	right.to_improper();
 
 	//Fraction result			//Default Constructor
-	//result.set_numerator(left.get_numerator() * right.get_numerator());       // РџСЂРёРјРµСЂ РїСЂРё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРё set - РјРµС‚РѕРґРѕРІ
+	//result.set_numerator(left.get_numerator() * right.get_numerator());       // Пример при использовании set - методов
 	//result.set_denominator(left.get_denominator() * right.get_denominator());
 
 	//Fraction result			//Default Constructor
 	//(
-	//	left.get_numerator() * right.get_numerator(),                           //РџСЂРёРјРµСЂ РїСЂРё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРё Fraction РєР°Рє С„СѓРЅРєС†РёРё, С‚РѕР»СЊРєРѕ РЅР° get-РјРµС‚РѕРґР°С….
+	//	left.get_numerator() * right.get_numerator(),                           //Пример при использовании Fraction как функции, только на get-методах.
 	//	left.get_denominator() * right.get_denominator()
 	//);
 	//return result;
 
-	//РЇРІРЅРѕ РІС‹Р·С‹РІР°РµРј РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ Рё СЃРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅС‹Р№ Р±РµР·С‹РјСЏРЅРЅС‹Р№ РѕР±СЉРµРєС‚ РєРѕС‚РѕСЂС‹Р№ СЃСЂР°Р·Сѓ Р¶Рµ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РЅР° РјРµСЃС‚Рѕ РІС‹Р·РѕРІР°:
-	//РўРѕ РµСЃС‚СЊ РЅРµ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РєР°Рє РІС‹С€Рµ СЃРѕР·РґР°РІР°С‚СЊ РѕР±СЉРµРєС‚ СЃ РёРјРµРЅРµРј, РµСЃР»Рё РїРѕСЃР» РµСЃСЂР°Р·Сѓ РµРіРѕ СѓРЅРёС‡С‚РѕР¶Р°РµРј.
+	//Явно вызываем конструктор и создаем временный безымянный объект который сразу же возвращается на место вызова:
+	//То есть не обязательно как выше создавать объект с именем, если посл есразу его уничтожаем.
 
 	return Fraction
 	(
 		left.get_numerator() * right.get_numerator(),
 		left.get_denominator() * right.get_denominator()
-	).to_proper().reduce();		//РїСЂРёРїРёСЃС‹РІР°РµРј СЂРµР·СѓР»СЊС‚Р°С‚ СѓРјРЅРѕР¶РµРЅРёСЏ Рє РјРµРґРѕРґСѓ РїСЂР°РІРёР»СЊРЅРѕР№ РґСЂРѕР±Рё(С†РµР»Р°СЏ С‡Р°СЃС‚СЊ, С‡РёСЃР»РёС‚РµР»СЊ, Р·РЅР°РјРµРЅР°С‚РµР»СЊ 3(4/5)
+	).to_proper().reduce();		//приписываем результат умножения к медоду правильной дроби(целая часть, числитель, знаменатель 3(4/5)
 }
-Fraction operator/(Fraction left, Fraction right)    //РћРїРµСЂР°С‚РѕСЂ /
+Fraction operator/(Fraction left, Fraction right)    //Оператор /
 {
 	/*left.to_improper();
 	right.to_improper();
@@ -191,9 +191,9 @@ Fraction operator/(Fraction left, Fraction right)    //РћРїРµСЂР°С‚РѕСЂ /
 		left.get_denominator() * right.get_numerator()
 	).to_proper();*/
 
-	return left * right.inverted().reduce();   //Р·Р°РјРµРЅСЏРµРј РѕРїРёСЃР°РЅРЅС‹Рј РІС‹С€Рµ РІ РєР»Р°СЃСЃРµ РјРµС‚РѕРґРѕРј 'inverted'
+	return left * right.inverted().reduce();   //заменяем описанным выше в классе методом 'inverted'
 }
-Fraction operator+(Fraction left, Fraction right)    //РћРїРµСЂР°С‚РѕСЂ +
+Fraction operator+(Fraction left, Fraction right)    //Оператор +
 {
 	left.to_improper();
 	right.to_improper();
@@ -203,7 +203,7 @@ Fraction operator+(Fraction left, Fraction right)    //РћРїРµСЂР°С‚РѕСЂ +
 		left.get_denominator() * right.get_denominator()
 	).to_proper().reduce();
 }
-Fraction operator-(Fraction left, Fraction right)    //РћРїРµСЂР°С‚РѕСЂ -
+Fraction operator-(Fraction left, Fraction right)    //Оператор -
 {
 	left.to_improper();
 	right.to_improper();
@@ -211,7 +211,7 @@ Fraction operator-(Fraction left, Fraction right)    //РћРїРµСЂР°С‚РѕСЂ -
 	(
 		left.get_numerator() - right.get_numerator(),
 		left.get_denominator() * right.get_denominator()
-	).to_proper();
+	).to_proper().reduce();
 }
 
 //#define CONSTRUCTORS_CHECK
