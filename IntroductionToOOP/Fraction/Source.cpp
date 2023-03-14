@@ -48,7 +48,7 @@ public:
 		this->denominator = 1;
 		cout << "DefaultConstructor:\t" << this << endl;
 	}
-	Fraction(int integer)   //Конструктор с одним параметром
+	explicit Fraction(int integer)   //Конструктор с одним параметром
 	{
 		this->integer = integer;
 		this->numerator = 0;
@@ -87,7 +87,7 @@ public:
 		this->integer = other.integer;
 		this->numerator = other.numerator;
 		this->denominator = other.denominator;
-		cout << "CopyAssignment" << this << endl;
+		cout << "CopyAssignment:\t\t" << this << endl;
 		return *this;
 	}
 	Fraction& operator*=(const Fraction& other)				//Operator *=
@@ -105,6 +105,11 @@ public:
 	Fraction& operator-=(const Fraction& other)				//Operator -=
 	{
 		return *this = *this - other;
+	}
+	//				Tyep-cast operators
+	explicit operator int()const										//from Fraction to Int
+	{
+		return Fraction(*this).to_proper().integer;
 	}
 	//				Methods:
 	Fraction& to_improper()			//to improper
@@ -214,7 +219,52 @@ Fraction operator-(Fraction left, Fraction right)    //Оператор -
 	).to_proper();
 }
 
+//////////////////////////////////////////////////////////
+//				COMPARISON OPERATORS					//	
+
+bool operator ==(Fraction left, Fraction right)			//Оператор срaвнения ==
+{
+	left.to_improper();
+	right.to_improper();
+	return	left.get_numerator() * right.get_denominator() ==
+			right.get_numerator() * left.get_denominator();
+}
+bool operator!=(const Fraction& left, const Fraction& right) //Оператор срaвнения !=
+{
+	return !(left == right);
+}
+bool operator >(Fraction left, Fraction right)			//Оператор срaвнения >
+{
+	left.to_improper();
+	right.to_improper();
+	return	left.get_numerator() * right.get_denominator() >
+		right.get_numerator() * left.get_denominator();
+}
+bool operator <(Fraction left, Fraction right)			//Оператор срaвнения <
+{
+	left.to_improper();
+	right.to_improper();
+	return	left.get_numerator() * right.get_denominator() <
+		right.get_numerator() * left.get_denominator();
+}
+bool operator>=(const Fraction& left, const Fraction& right) //Оператор срaвнения >=
+{
+	//returt left > right || left == right;
+	return !(left < right);
+}
+bool operator<=(const Fraction& left, const Fraction& right) //Оператор срaвнения <=
+{
+	return !(left > right);
+}
+
 //#define CONSTRUCTORS_CHECK
+//#define ARITHMETICAL_OPERATORS_CHECK
+//#define COMPARISON_OPERATORS
+//#define TYPE_CONVERSIONS_BASICK
+//#define CONVERSION_FROM_OTHER_TO_CLASS
+//#define CONVERSION_FROM_CCLASS_TO_OTHER
+#define HOME_WORK_1
+#define HOME_WORK_2
 
 void main()
 {
@@ -235,6 +285,7 @@ void main()
 	Fraction E = D;
 	E.print();
 #endif // CONSTRUCTORS_CHECK
+#ifdef ARITHMETICAL_OPERATORS_CHECK
 	Fraction A(2, 3, 4); A.print();
 
 	Fraction B(3, 4, 5); B.print();
@@ -254,5 +305,39 @@ void main()
 	A += B; A.print();
 
 	A -= B; A.print();
+#endif // ARITHMETICAL_OPERATORS_CHECK
+#ifdef COMPARISON_OPERATORS
+	cout << (Fraction(3, 1, 2) <= Fraction(3, 5, 10)) << endl;
+#endif // COMPARISON_OPERATORS
+#ifdef TYPE_CONVERSIONS_BASICK
+	int a = 2;			//No conversions
+	double b = 3;		//Conversion from less to more
+	int c = b;			//Conversion from more to lesswith no data loss
+	int d = 4.5;		//Conversion from more to less with data loss  
+#endif // TYPE_CONVERSIONS_BASICK
+#ifdef CONVERSION_FROM_OTHER_TO_CLASS
+	Fraction A = (Fraction)5;   //COnversion from other to class by Single-Argument COnstructor
+	A.print();
+
+	Fraction B;
+	B = Fraction(8);				//Conversion from other to class by Assignment operator
+	B.print();
+#endif // CONVERSION_FROM_OTHER_TO_CLASS
+#ifdef CONVERSION_FROM_CCLASS_TO_OTHER
+	Fraction A(11, 4);
+	A.print();
+	int a = A;
+	cout << a << endl;
+#endif // CONVERSION_FROM_CCLASS_TO_OTHER
+#ifdef HOME_WORK_1    //from Fraction to double
+	Fraction B(2, 3, 4);
+	double b = (int)B;
+	cout << b << endl;
+#endif
+#ifdef HOME_WORK_2		//from double to fraction
+	Fraction B = 2.75;
+	cout << B << endl;
+#endif
+
 
 }
