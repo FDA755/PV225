@@ -397,4 +397,5 @@ cout << 7/2 <<endl; выведет int 3 / cout << 7./2 <<endl; выведет double 3.5
 	//https://cplusplus.com/reference/cstdlib/atoi/?kw=atoi
 	number[n++] = atoi(pch);  //atoi - ASCII-string to integer преобразует строку в число, если строка €вл€етс€ числом, т.е содержит цифры.
 	#define _CRT_SECURE_NO_WARNINGS    //≈сли вылетает ошибка это, то так ее убираем, студи€ считает, что ыводитс€ устаревший, не безопасный код
+	is >> buffer;    -->     is.getline(buffer, SIZE);   //изменили, чтобы вводить строку с пробелом getline();
   */
