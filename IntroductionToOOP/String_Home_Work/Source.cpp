@@ -19,7 +19,7 @@ public:
 	explicit String(int size = 80)	//Конструктор по умолчанию
 	{
 		this->size = size;
-		this->str = new char[size] {'z','z'};								//{} - зануляют выделяемую память в массиве, как в числовом, так и в строковом типе
+		this->str = new char[size] {};								//{} - зануляют выделяемую память в массиве, как в числовом, так и в строковом типе
 		cout << "DefConstructor:\t" << this << endl;
 	}
 	~String()
@@ -39,7 +39,7 @@ public:
 void main()
 {
 	setlocale(LC_ALL, "");
-	String str1(5);
+	String str1(40); 
 	str1.print();
 
 }
