@@ -1,4 +1,5 @@
 ﻿//Fraction
+#define _CRT_SECURE_NO_WARNINGS    //Если вылетает ошибка это, то так ее убираем, студия считает, что ыводится устаревший, не безопасный код
 #include<iostream>
 using namespace std;
 #define delimiter "\n----------------------------------------------------------\n"
@@ -48,6 +49,15 @@ public:
 		this->denominator = 1;
 		cout << "DefaultConstructor:\t" << this << endl;
 	}
+	Fraction(double decimal)         //Конструктор double
+	{
+		this->integer = decimal;	//Сохраняем целую часть
+		decimal -= integer;			//убираем целую часть и десятичной дроби
+		this->denominator = 1e+9;
+		this->numerator = decimal * denominator;
+		reduce();
+		cout << "DConstructor:\t" << this << endl;
+	}
 	explicit Fraction(int integer)   //Конструктор с одним параметром
 	{
 		this->integer = integer;
@@ -82,6 +92,13 @@ public:
 		cout << "Destructor:\t\t" << this << endl;
 	}
 	//				Operators:
+	Fraction& operator()(int integer, int numerator, int denominator)
+	{
+		set_integer(integer);
+		set_numerator(numerator);
+		set_denominator(denominator);
+		return *this;
+	}
 	Fraction& operator=(const Fraction& other)               //Оператор =
 	{
 		this->integer = other.integer;
@@ -111,6 +128,11 @@ public:
 	{
 		return Fraction(*this).to_proper().integer;
 	}
+	explicit operator double()const												//from Double to Fraction
+	{
+		return integer + (double)numerator / denominator;
+	}
+
 	//				Methods:
 	Fraction& to_improper()			//to improper
 	{
@@ -147,17 +169,18 @@ public:
 		denominator /= GCD;
 		return *this;
 	}
-	void print()const					//Print
+	std::ostream& print(std::ostream& os)const					//Print      //Переписываем Print для <<   ostream
 	{
-		if (integer)cout << integer;
+		if (integer)os << integer;
 		if (numerator)
 		{
-			if (integer)cout << "(";
-			cout << numerator << "/" << denominator;
-			if (integer)cout << ")";
+			if (integer)os << "(";
+			os << numerator << "/" << denominator;
+			if (integer)os << ")";
 		}
-		else if (integer == 0)cout << 0;
-		cout << endl;
+		else if (integer == 0)os << 0;
+		//os << endl;
+		return os;
 	}
 };
 
@@ -256,6 +279,43 @@ bool operator<=(const Fraction& left, const Fraction& right) //Оператор 
 {
 	return !(left > right);
 }
+std::ostream& operator<<(std::ostream& os, const Fraction& obj)//Oprator ostream <<
+{
+	return obj.print(os);
+}
+std::istream& operator>>(std::istream& is, Fraction& obj)     //Operator cin >>   //Fraction& - не константная ссылка, потому что оператор справа для стрелок будет изменять значение.
+{
+	/*int integer, numerator, denominator;              //Самый простой вариант ввода, но при нем мы можем только вводить числа подряд, но не 1 1/2, 1(1/2) и тд.
+	is >> integer >> numerator >> denominator;
+	obj(integer, numerator, denominator);*/
+
+	int number[3] = {};
+	
+	const int SIZE = 32;
+	char buffer[SIZE] = {};
+
+	char delimiters[] = "/ ()";
+
+	//is >> buffer;
+	is.getline(buffer, SIZE);   //ищменили, чтобы вводить строку с пробелом getline();
+
+	int n = 0; //счетчик чисел в веденной строке.
+	for (char* pch = strtok(buffer, delimiters); pch; pch = strtok(NULL, delimiters))           //stratok - стандартная функция языка C, которая делит строку  Первы вызов strtok(строкаЮдля которой вызван strtok, )б последузте вызовы с NULL
+		//означают, что функция strtok работает с преэней строкой, т.е ранее переданной в нее. 
+		//https://cplusplus.com/reference/cstring/strtok/?kw=strtok
+		//https://cplusplus.com/reference/cstdlib/atoi/?kw=atoi
+		number[n++] = atoi(pch);  //atoi - ASCII-string to integer преобразует строку в число, если строка является числом, т.е содержит цифры.
+
+	switch (n)
+	{
+	case 1:obj.set_integer(number[0]); break;
+	case 2:obj.set_numerator(number[0]);
+		obj.set_denominator(number[1]); break;
+	case 3:obj(number[0], number[1], number[2]); break;
+	}
+
+	return is;
+}
 
 //#define CONSTRUCTORS_CHECK
 //#define ARITHMETICAL_OPERATORS_CHECK
@@ -263,8 +323,8 @@ bool operator<=(const Fraction& left, const Fraction& right) //Оператор 
 //#define TYPE_CONVERSIONS_BASICK
 //#define CONVERSION_FROM_OTHER_TO_CLASS
 //#define CONVERSION_FROM_CCLASS_TO_OTHER
-#define HOME_WORK_1
-#define HOME_WORK_2
+//#define HOME_WORK_1
+//#define HOME_WORK_2
 
 void main()
 {
@@ -309,6 +369,10 @@ void main()
 #ifdef COMPARISON_OPERATORS
 	cout << (Fraction(3, 1, 2) <= Fraction(3, 5, 10)) << endl;
 #endif // COMPARISON_OPERATORS
+
+	/*Fraction A(2, 3, 4);
+	cout << A << endl;*/
+
 #ifdef TYPE_CONVERSIONS_BASICK
 	int a = 2;			//No conversions
 	double b = 3;		//Conversion from less to more
@@ -331,13 +395,20 @@ void main()
 #endif // CONVERSION_FROM_CCLASS_TO_OTHER
 #ifdef HOME_WORK_1    //from Fraction to double
 	Fraction B(2, 3, 4);
-	double b = (int)B;
+	double b = (double)B;
 	cout << b << endl;
 #endif
-#ifdef HOME_WORK_2		//from double to fraction
-	Fraction B = 2.75;
-	cout << B << endl;
+#ifdef HOME_WORK_2		//double to Fraction
+	Fraction C = 2.75;
+	C.print(cout) << endl;
+	cout << C << endl;
+
+
 #endif
+
+	Fraction A;							//проверка преобразования cin >>
+	cout << "Введите простую дробь: "; cin >> A;
+	cout << A << endl;
 
 
 }
