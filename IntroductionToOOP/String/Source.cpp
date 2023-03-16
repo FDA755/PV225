@@ -1,6 +1,9 @@
 ﻿//String
 #include<iostream>
 using namespace std;
+using std::cin;
+using std::cout;
+using std::endl;
 
 class String;
 String operator+(const String& left, const String& right);
@@ -36,6 +39,22 @@ public:
 		for (int i = 0; i < size; i++)this->str[i] = str[i];
 		cout << "1ArgConstructor:\t" << this << endl;
 	}
+	String(const String& other)											//DeepCopy Constructor
+	{
+		this->size = other.size;
+		this->str = new char[size] {};
+		for (int i = 0; i < size; i++)
+			this->str[i] = other.str[i];
+		cout << "CopyConstructor:\t" << endl;
+	}
+	String (String&& other)noexcept			//R-value refference			//Shallow copy - поверхностное копирование
+	{
+		this->size = other.size;
+		this->str = other.str;			//Shallow copy
+		other. size = 0;
+		other.str = nullptr;			//nullptr - указательна ноль
+		cout << "MoveConstructor:" << this << endl;
+	}
 	~String()
 	{
 		delete this->str;
@@ -45,13 +64,23 @@ public:
 	///						Operators:
 	String& operator=(const String& other)								//Assighment Operator =
 	{
+		//           l-value = r-value
 		if (this == &other)return *this;
 		delete[] this->str;
 		this->size = other.size;
 		this->str = new char[size] {};
 		for (int i = 0; i < size; i++)
 		this->str[i] = other.str[i];
-		cout << "CopyAssignmentOp\t" << endl;
+		cout << "CopyAssignmentOp:\t" << endl;
+		return *this;
+	}
+	String& operator=(String&& other)noexcept
+	{
+		this->size = other.size;
+		this->str = other.str;
+		other.size = 0;
+		other.str = nullptr;
+		cout << "MoveAssignment:\t" << this << endl;
 		return *this;
 	}
 	String& operator+=(const String& other)							//Operator +=
@@ -69,15 +98,6 @@ public:
 		return str[i];
 	}
 	
-
-	String(const String& other)											//DeepCopy Constructor
-	{
-		this->size = other.size;
-		this->str = new char[size] {};
-		for (int i = 0; i < size; i++)
-			this->str[i] = other.str[i];
-		cout << "CopyConstructor:\t" << endl;
-	}
 	//						Methods:
 	void print()const		//Print
 	{
@@ -121,11 +141,14 @@ std::ostream& operator<<(std::ostream& os, const String& obj)			//Operator cout 
 	return os << obj.get_str();
 }
 
+//#define BASE_CHECK
+
 void main()
 {
 	setlocale(LC_ALL, "");
+#ifdef BASE_CHECK
 	/*String str1 (5);
-	str1.print();*/
+str1.print();*/
 
 	String str1 = "Hello";    //"Hello" - это строковая константа
 	cout << str1 << endl;
@@ -135,8 +158,29 @@ void main()
 
 	String str3;
 	str3 = str1 + str2;
-	cout << str3 << endl;
 
-	str1 += str2;
-	cout << str1 << endl;
+	String str4 = str3;			//Copy constructor - потому ,что копируется сузествуюзий объект
+
+	String str5;
+	str5 = str1 + str2;
+	cout << str5 << endl;
+#endif // BASE_CHECK
+
+	String str1;			//Default constructor
+	str1.print();
+	String str2 = "Hello";	//Single Argument Constructor
+	str2.print();
+	String str3 = str2;		//CopyConstructor
+	str3.print();
+	String str4();			//Default constructor - На самом деле здесь не вызывается никакой конструктор, потому что здесь не создается объект.
+	//Здесь создается функция str4(), которая не принимает ниаких параметров и возвразает значение типа String
+	//str4().print();         //- это не объект, это функция, а для фенкции нельзя вызвать метод.
+	String str5{ "Hello" };
+	str5.print();
+	String str6{ 22 };
+	str6.print();
+	String str7{ "World" };
+	str7.print();
+	String str8{ str7 };
+	str8.print();
 }
