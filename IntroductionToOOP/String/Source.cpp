@@ -30,22 +30,22 @@ public:
 	{
 		//this->size = size;
 		//this->str = new char[size] {};								//{} - зануляют выделяемую память в массиве, как в числовом, так и в строковом типе
-		cout << "DefConstructor:\t" << this << endl;
+		cout << "DefConstructor:\t\t" << this << endl;
 	}
-	String(const char* str):size (strlen(str) + 1),str(new char[size] {})  //Создаем  конструктор с одним параметром чтобы принимал тип 'char'
+	String(const char* str):String(strlen(str)+1)  //Создаем  конструктор с одним параметром чтобы принимал тип 'char'
 	{
 		//this->size = strlen(str)+1;			     //strlen - возвращает размер строки в символах, но в классе хранится размер строки в байтах, т.е с учетом терминирующег нуля (т.е 0 ,это еще +1)
 		//this->str = new char[size] {};
 		for (int i = 0; i < size; i++)this->str[i] = str[i];
 		cout << "1ArgConstructor:\t" << this << endl;
 	}
-	String(const String& other) :size(other.size), str(new char[size] {})									//DeepCopy Constructor
+	String(const String& other) :String(other.str)									//DeepCopy Constructor
 	{
 		//this->size = other.size;
 		//this->str = new char[size] {};
 		for (int i = 0; i < size; i++)
 			this->str[i] = other.str[i];
-		cout << "CopyConstructor:\t" << endl;
+		cout << "CopyConstructor:\t" << this<< endl;
 	}
 	String(String&& other)noexcept :size(other.size), str(other.str)		//R-value refference			//Shallow copy - поверхностное копирование
 	{
@@ -80,7 +80,7 @@ public:
 		this->str = other.str;
 		other.size = 0;
 		other.str = nullptr;
-		cout << "MoveAssignment:\t" << this << endl;
+		cout << "MoveAssignment:\t\t" << this << endl;
 		return *this;
 	}
 	String& operator+=(const String& other)							//Operator +=
