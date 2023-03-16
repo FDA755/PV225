@@ -26,31 +26,31 @@ public:
 		return str;			//возвразает указатель на массив
 	}
 	//						Constructors:
-	explicit String(int size = 80)	//Конструктор по умолчанию
+	explicit String(int size = 80) :size(size), str(new char[size] {})  //Конструктор по умолчанию
 	{
-		this->size = size;
-		this->str = new char[size] {};								//{} - зануляют выделяемую память в массиве, как в числовом, так и в строковом типе
+		//this->size = size;
+		//this->str = new char[size] {};								//{} - зануляют выделяемую память в массиве, как в числовом, так и в строковом типе
 		cout << "DefConstructor:\t" << this << endl;
 	}
-	String(const char* str)    //Создаем  конструктор с одним параметром чтобы принимал тип 'char'
+	String(const char* str):size (strlen(str) + 1),str(new char[size] {})  //Создаем  конструктор с одним параметром чтобы принимал тип 'char'
 	{
-		this->size = strlen(str)+1;			     //strlen - возвращает размер строки в символах, но в классе хранится размер строки в байтах, т.е с учетом терминирующег нуля (т.е 0 ,это еще +1)
-		this->str = new char[size] {};
+		//this->size = strlen(str)+1;			     //strlen - возвращает размер строки в символах, но в классе хранится размер строки в байтах, т.е с учетом терминирующег нуля (т.е 0 ,это еще +1)
+		//this->str = new char[size] {};
 		for (int i = 0; i < size; i++)this->str[i] = str[i];
 		cout << "1ArgConstructor:\t" << this << endl;
 	}
-	String(const String& other)											//DeepCopy Constructor
+	String(const String& other) :size(other.size), str(new char[size] {})									//DeepCopy Constructor
 	{
-		this->size = other.size;
-		this->str = new char[size] {};
+		//this->size = other.size;
+		//this->str = new char[size] {};
 		for (int i = 0; i < size; i++)
 			this->str[i] = other.str[i];
 		cout << "CopyConstructor:\t" << endl;
 	}
-	String (String&& other)noexcept			//R-value refference			//Shallow copy - поверхностное копирование
+	String(String&& other)noexcept :size(other.size), str(other.str)		//R-value refference			//Shallow copy - поверхностное копирование
 	{
-		this->size = other.size;
-		this->str = other.str;			//Shallow copy
+		//this->size = other.size;
+		//this->str = other.str;			//Shallow copy
 		other. size = 0;
 		other.str = nullptr;			//nullptr - указательна ноль
 		cout << "MoveConstructor:" << this << endl;
@@ -141,14 +141,15 @@ std::ostream& operator<<(std::ostream& os, const String& obj)			//Operator cout 
 	return os << obj.get_str();
 }
 
-//#define BASE_CHECK
+#define BASE_CHECK
+//#define CALLING_CONSTRUCTORS
 
 void main()
 {
 	setlocale(LC_ALL, "");
 #ifdef BASE_CHECK
-	/*String str1 (5);
-str1.print();*/
+	String str (5);
+	str.print();
 
 	String str1 = "Hello";    //"Hello" - это строковая константа
 	cout << str1 << endl;
@@ -160,12 +161,14 @@ str1.print();*/
 	str3 = str1 + str2;
 
 	String str4 = str3;			//Copy constructor - потому ,что копируется сузествуюзий объект
+	str4.print();
 
 	String str5;
 	str5 = str1 + str2;
 	cout << str5 << endl;
 #endif // BASE_CHECK
 
+#ifdef CALLING_CONSTRUCTORS
 	String str1;			//Default constructor
 	str1.print();
 	String str2 = "Hello";	//Single Argument Constructor
@@ -183,4 +186,8 @@ str1.print();*/
 	str7.print();
 	String str8{ str7 };
 	str8.print();
+#endif // CALLING_CONSTRUCTORS
+
+
+
 }

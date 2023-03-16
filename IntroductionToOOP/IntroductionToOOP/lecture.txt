@@ -438,4 +438,13 @@ Move-methods принимают не константную и не ссылку на объект, а R-value refferenc
 	str4().print();         //- это не объект, это функция, а для фенкции нельзя вызвать метод.
 	Если мы хотим явно вызвать конструктор по умолчанию, то это можно сделать так:
 	String str5{};
+		
+		Инициализация в заголовке возможна только в конструкторе и не возможна в других методах.
+	String(const String& other) :size(other.size), str(new char[size] {})									//DeepCopy Constructor
+	{																		//Переменные внутри метода можно прописывать в перевой строке. первое значение -значение метода, в () - то, что она принимает
+		//this->size = other.size;
+		//this->str = new char[size] {};
+		for (int i = 0; i < size; i++)
+			this->str[i] = other.str[i];
+		cout << "CopyConstructor:\t" << endl;
   */
