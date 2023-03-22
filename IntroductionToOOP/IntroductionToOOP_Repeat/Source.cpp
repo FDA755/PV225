@@ -43,14 +43,29 @@ public:
 		cout << "Constructor:\t" << this << endl;
 
 	}
+	Point(const Point& other)
+	{
+		this->x = other.x;
+		this->y = other.y;
+		cout << "CopyConstructor:\t" << this << endl;
+	}
+
 	~Point()
 	{
 		cout << "Destructor:\t" << this << endl;
 	}
-
-																		//Methods:
-	double distance(Point other)const
+	//																	//Operators
+	Point operator=(const Point& other)
 	{
+		this->x = other.x;
+		this->y = other.y;
+		cout << "CopyAssignment:\t" << this << endl;
+		return *this;
+	}
+																		//Methods:
+	double distance(const Point& other)const
+	{
+		//other.x *= 126;
 		double x_distance = this->x - other.x;
 		double y_distance = this->y - other.y;
 		double distance = sqrt(x_distance* x_distance+ y_distance* y_distance);
@@ -62,7 +77,7 @@ public:
 	}
 };
 
-double distance(Point A, Point B)
+double distance(Point& A, Point& B)
 {
 	double x_distance = A.get_x()-B.get_x();
 	double y_distance = A.get_y()-B.get_y();
@@ -72,6 +87,9 @@ double distance(Point A, Point B)
 
 //#define STRUCT_POINT
 //#define DISTANCE_CHECK
+//#define CONSTRUCTORS_CHECK
+//#define ASSIGNMENT_CHECK_1
+#define ASSIGNMENT_CHECK_2
 
 void main()
 {
@@ -98,14 +116,35 @@ void main()
 	cout << "Расстояние от точки А до Б: " << A.distance(B) << endl;
 	cout << "Между А и Б: " << distance(A, B) << endl;
 #endif // DISTANCE_CHECK
-
+#ifdef CONSTRUCTORS_CHECK
 	Point A;
 	//cout << A.get_x() << "\t" << A.get_y() << endl;
 	A.print();
-	
+
 	Point B(2, 3);	B.print();
 
 	Point C(3); C.print();
 
+	Point D = C; D.print();//Copy constructor  
+#endif // CONSTRUCTORS_CHECK
+#ifdef ASSIGNMENT_CHECK_1
+	//CopyAssignment
+	Point A(2, 3); A.print();
+	Point B = A; B.print();
+	Point C;
+	C = B; C.print();
+
+#endif // ASSIGNMENT_CHECK_1
+#ifdef ASSIGNMENT_CHECK_2
+	int a, b, c;
+	a = b = c = 0;
+
+	Point A, B, C;
+	A = B = C = Point(2, 3);
+
+
+
+
+#endif // ASSIGNMENT_CHECK_2
 
 }
