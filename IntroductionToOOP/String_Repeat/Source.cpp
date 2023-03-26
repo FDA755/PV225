@@ -23,33 +23,33 @@ public:
 		return str;
 	}
 	//																Constructors:
-	explicit String(int size = 80)
+	explicit String(int size = 80):size(size), str(new char[size]{})
 	{
-		this->size = size;
-		this->str = new char[size] {};
+		//this->size = size;
+		//this->str = new char[size] {};
 		cout << "DefConstructor:\t" << this << endl;
 	}
-	String(const char* str)
+	String(const char* str) :size(strlen(str) + 1), str(new char[size] {})
 	{
-		this->size = strlen(str)+1;
-		this->str = new char[size] {};
+		//this->size = strlen(str)+1;
+		//this->str = new char[size] {};
 		for (int i = 0; i < size; i++)this->str[i] = str[i];
-		cout << "1ArgConstructor:\t" << this << endl;
+		cout << "1ArgConstructor:" << this << endl;
 	}
-	String(const String& other)
+	String(const String& other):size(other.size),str(str = new char[size] {})
 	{
-		this->size = other.size;
-		this->str = new char[size] {};
+		//this->size = other.size;
+		//this->str = new char[size] {};
 		for (int i = 0; i < size; i++) this->str[i] = other.str[i];
 		cout << "CopyConstructor:\t" << endl;
 	}
-	String(String&& other)noexcept
+	String(String&& other)noexcept :size(other.size), str(other.str)
 	{
-		this->size = other.size;
-		this->str = other.str;
+		//this->size = other.size;
+		//this->str = other.str;
 		other.size = 0;
 		other.str = nullptr;
-		cout << "MoveCOnstructor:\t" << this << endl;
+		cout << "MoveConstructor:\t" << this << endl;
 	}
 	~String()
 	{
@@ -113,14 +113,14 @@ std::ostream& operator<<(std::ostream& os, const String& obj)
 	return os << obj.get_str();
 }
 
-//#define BASE_CHECK
+#define BASE_CHECK
+//#define CALLING_CONSTRUCTORS
 
 void main()
 {
 	setlocale(LC_ALL, "");
 #ifdef BASE_CHECK
-	/*String str1 (5);
-str1.print();*/
+	String str(5);  str.print();
 
 	String str1 = "Hello";	//"Hello" - строковая константа
 	str1 = str1; cout << str1 << endl;
@@ -136,13 +136,15 @@ str1.print();*/
 	//str1 = str3; cout << str1 << endl;
 	//str1 += str2; cout << str1 << endl;  
 #endif // BASE_CHECK
-
+#ifdef CALLING_CONSTRUCTORS
 	String str1;		    str1.print();	//Default Constructor
 	String str2 = "Hello";	str2.print();	//Single Argument constructor
 	String str3 = str2;		str3.print();	//Copy Constructor
-	String str4();			
+	String str4();
 	String str5{};			str5.print();	//Явный вызов конструктора по умолчанию
-	String str6{22};		str6.print();
-	String str7{"World"};	str7.print();
-	String str8{ str7 };	str8.print();	//Copy constructor
+	String str6{ 22 };		str6.print();
+	String str7{ "World" };	str7.print();
+	String str8{ str7 };	str8.print();	//Copy constructor  
+#endif // CALLING_CONSTRUCTORS
+
 }
