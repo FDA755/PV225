@@ -255,4 +255,6 @@ void main()
 
 	A -= B; A.print();
 
+	Fraction E(3, 4, 5); E.to_improper().print();
+
 }

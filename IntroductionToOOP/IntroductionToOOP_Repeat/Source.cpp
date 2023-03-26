@@ -1,4 +1,4 @@
-//Introduction to OOP
+//Introduction to OOP repeat
 #include<iostream>
 using namespace std;
 
@@ -55,11 +55,32 @@ public:
 		cout << "Destructor:\t" << this << endl;
 	}
 	//																	//Operators
-	Point operator=(const Point& other)
+	Point& operator=(const Point& other)
 	{
 		this->x = other.x;
 		this->y = other.y;
 		cout << "CopyAssignment:\t" << this << endl;
+		return *this;
+	}
+	Point& operator++()
+	{
+		this->x++;
+		this->y++;
+		return *this;
+	}
+	Point operator++(int)
+	{
+		/*this->x++;
+		this->y++;*/
+		Point old = *this;
+		this->x++;
+		this->y++;
+		return old;
+	}
+	Point& operator()(double x, double y)
+	{
+		set_x(x);
+		set_y(y);
 		return *this;
 	}
 																		//Methods:
@@ -84,7 +105,35 @@ double distance(Point& A, Point& B)
 	double distance = sqrt(x_distance * x_distance + y_distance * y_distance);
 	return distance;
 }
-
+Point operator+(const Point& left, const Point& right)
+{
+	Point res;
+	res.set_x(left.get_x() + right.get_x());
+	res.set_y(left.get_y() + right.get_y());
+	return res;
+}
+bool operator==(const Point& left, const Point& right)
+{
+	/*if (left.get_x() == right.get_x() && left.get_y() == right.get_y())
+		return true;
+	else return false;*/
+	return (left.get_x() == right.get_x() && left.get_y() == right.get_y());
+}
+bool operator!=(const Point& left, const Point& right)
+{
+	return !(left==right );
+}
+std::ostream& operator<<(std::ostream& os, const Point& obj)
+{
+	return os << "X = " << obj.get_x() << "\tY = " << obj.get_y();
+}
+std::istream& operator>>(std::istream& is, Point& obj)
+{
+	double x, y;
+	is >> x >> y;
+	obj(x, y);
+	return is;
+}
 //#define STRUCT_POINT
 //#define DISTANCE_CHECK
 //#define CONSTRUCTORS_CHECK
@@ -136,15 +185,26 @@ void main()
 
 #endif // ASSIGNMENT_CHECK_1
 #ifdef ASSIGNMENT_CHECK_2
-	int a, b, c;
+	/*int a, b, c;
 	a = b = c = 0;
 
 	Point A, B, C;
-	A = B = C = Point(2, 3);
+	A = B = C = Point(2, 3);*/
 
+	/*Point A(2, 3);
+	Point B(4, 5);
+	Point C = A + B; C.print();
+	++C; C.print();
+	C++; C.print();
 
-
-
+	cout << (A == A) << endl;
+	cout << (A != A) << endl;*/
+	Point A(2,3);	A.print();
+	A.set_x(12);
+	A.set_y(5);		A.print();
+	A(4, 4);		A.print();
+	cout << A << endl;;
+	cin >> A; A.print();
 #endif // ASSIGNMENT_CHECK_2
 
 }
