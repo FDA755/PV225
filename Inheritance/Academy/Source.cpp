@@ -69,6 +69,11 @@ public:
 	}
 };
 
+std::ostream& operator<<(std::ostream& os, const Human& obj)
+{
+	return os << obj.get_last_name() << " " << obj.get_first_name() << " " << obj.get_age() << endl;
+}
+
 #define STUDENT_TAKE_PARAMETERS const std::string& specialty, const std::string& group, double rating, double attendance
 #define STUDENT_GIVE_PARAMETERS specialty, group, rating, attendance
 
@@ -139,6 +144,10 @@ public:
 		cout << specialty << " " << group << " " << rating << " " << attendance << endl;
 	}
 };
+std::ostream& operator<<(std::ostream& os, const Student& obj)
+{
+	return os << (Human&)obj<<" "<<obj.get_speciality() << " " << obj.get_group() << " " << obj.get_rating() << " " << obj.get_attendance() << endl;
+}
 
 #define TEACHER_TAKE_PARAMETERS const std::string & specialty, unsigned int experience
 #define TEACHER_GIVE_PARAMETERS specialty, experience
@@ -182,6 +191,11 @@ public:
 	}
 };
 
+std::ostream& operator<<(std::ostream& os, const Teacher& obj)
+{
+	return os << (Human&)obj << " " << obj.get_specialty() << " " << obj.get_experience() <<  endl;
+}
+
 class Graduate :public Student
 {
 	std::string subject;
@@ -210,7 +224,10 @@ public:
 		cout << subject << endl;
 	}
 };	
-
+std::ostream& operator<<(std::ostream& os, const Graduate& obj)
+{
+	return os << (Student&)obj << " " << obj.get_sublect() << endl;
+}
 
 //#define TIME_CHECK
 //#define INHERITANCE_CHECK
@@ -251,9 +268,16 @@ void main()
 	new Student("Vercetty","Tomas", 1970,05,25,"Criminalistics","Vice",90,95),
 	new Teacher("Diaz","Ricardo",1960,03,03,"Weapons distribution",20)
 	};
+		cout << "\n------------------------------------------------\n";
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
-		group[i]->info();
+		//group[i]->info();
+		//RTTI -runtime Type Information
+		cout << typeid(*group[i]).name() << ":\t";
+		//cout << *group[i] << endl;
+		if (typeid(*group[i]) == typeid(Student))cout << *dynamic_cast<Student*>(group[i]) << endl;
+		if (typeid(*group[i]) == typeid(Teacher))cout << *dynamic_cast<Teacher*>(group[i]) << endl;
+		if (typeid(*group[i]) == typeid(Graduate))cout << *dynamic_cast<Graduate*>(group[i]) << endl;
 		cout << "\n------------------------------------------------\n";
 	}
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
