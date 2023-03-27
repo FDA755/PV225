@@ -30,6 +30,4 @@ void main()
 	Cat tom; tom.sound();
 
 	Dog hatico; hatico.sound();
-
-
 }
