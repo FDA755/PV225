@@ -5,6 +5,9 @@
 #include<ctime>
 using namespace std;
 
+#define HUMAN_TAKE_PARAMETERS const std::string& last_name, const std::string& first_name, int year, int month, int day
+#define HUMAN_GIVE_PARAMETERS last_name, first_name,year, month, day
+
 class Human
 {
 	std::string last_name;
@@ -48,23 +51,26 @@ public:
 		birth_date.tm_mday = day;
 	}
 	//	---------------------------------------------------- Constructors:
-	Human(const std::string& last_name, const std::string& first_name, int year, int month, int day)
+	Human(HUMAN_TAKE_PARAMETERS)
 	{
 		set_last_name(last_name);
 		set_firts_name(first_name);
 		set_birth_date(year, month, day);
 		cout << "HConstructors:\t" << this << endl;
 	}
-	~Human()
+	virtual ~Human()
 	{
 		cout << "HDestructors:\t" << this << endl;
 	}
 	//	----------------------------------------------------  Methods:
-	void info()const
+	virtual void info()const
 	{
 		cout << last_name << " " << first_name << " " << get_age() << endl;
 	}
 };
+
+#define STUDENT_TAKE_PARAMETERS const std::string& specialty, const std::string& group, double rating, double attendance
+#define STUDENT_GIVE_PARAMETERS specialty, group, rating, attendance
 
 class Student : public Human
 {
@@ -106,10 +112,16 @@ public:
 		this->attendance = attendance;
 	}
 	//	---------------------------------------------------- Constructors:
-	Student(
-		const std::string& last_name, const std::string& first_name, int year, int month, int day,
-		const std::string& specialty, const std::string& group, double rating, double attendance
-	) : Human(last_name,first_name, year, month, day)		//Вызов конструктор абазового класса.
+	Student(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PARAMETERS) : Human(HUMAN_GIVE_PARAMETERS)		//Вызов конструктор абазового класса.
+	{
+		set_specialty(specialty);
+		set_group(group);
+		set_rating(rating);
+		set_attendance(attendance);
+		cout << "SConstructors:\t" << this << endl;
+	}
+	Student(const Human& human, const std::string& specialty, const std::string& group, double rating, double attendance)
+		:Human(human)
 	{
 		set_specialty(specialty);
 		set_group(group);
@@ -126,10 +138,82 @@ public:
 		Human::info();
 		cout << specialty << " " << group << " " << rating << " " << attendance << endl;
 	}
-
-
 };
+
+#define TEACHER_TAKE_PARAMETERS const std::string & specialty, unsigned int experience
+#define TEACHER_GIVE_PARAMETERS specialty, experience
+
+class Teacher : public Human
+{
+	std::string specialty;
+	unsigned int experience;
+public:
+	const std::string& get_specialty()const
+	{
+		return specialty;
+	}
+	unsigned int get_experience()const
+	{
+		return experience;
+	}
+	void set_specialty(const std::string& specialty)
+	{
+		this->specialty = specialty;
+	}
+	void set_experience(unsigned int experience)
+	{
+		this->experience = experience;
+	}
+	//	---------------------------------------------------- Constructors:
+	Teacher(HUMAN_TAKE_PARAMETERS, TEACHER_TAKE_PARAMETERS):Human(HUMAN_GIVE_PARAMETERS)
+	{
+		set_specialty(specialty);
+		set_experience(experience);
+		cout << "TConstructors:\t" << this << endl;
+	}
+	~Teacher()
+	{
+		cout << "TDestructor:\t" << this << endl;
+	}
+	void info()const
+	{
+		Human::info();
+		cout << specialty << " " << experience <<" лет.\n";
+	}
+};
+
+class Graduate :public Student
+{
+	std::string subject;
+public:
+	const std::string& get_sublect()const
+	{
+		return subject;
+	}
+	void set_subject(const std::string& subject)
+	{
+		this->subject = subject;
+	}
+	Graduate(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PARAMETERS, const std::string& subject)
+		:Student(HUMAN_GIVE_PARAMETERS, STUDENT_GIVE_PARAMETERS)
+	{
+		set_subject(subject);
+		cout << "GConstructor:\t" << this << endl;
+	}
+	~Graduate()
+	{
+		cout << "GDestructor:\t" << this << endl;
+	}
+	void info()const
+	{
+		Student::info();
+		cout << subject << endl;
+	}
+};	
+
+
 //#define TIME_CHECK
+//#define INHERITANCE_CHECK
 
 void main()
 {
@@ -144,9 +228,37 @@ void main()
 	cout << asctime(tm_today) << endl;
 #endif // TIME_CHECK
 
+#ifdef INHERITANCE_CHECK
 	Human human("Федосов", "Дмитрий", 1990, 01, 01);
 	human.info();
 
-	Student student("Федосов", "Дмитрий", 1991, 01, 01, "programmer", "pv225", 5, 100);
+	//Student student("Федосов", "Дмитрий", 1991, 01, 01, "programmer", "pv225", 5, 100);
+	Student student(human, "programmer", "pv225", 5, 100);
 	student.info();
+
+	Teacher teacher("Einstein", "Albert", 1992, 03, 05, "IT", 5);
+	teacher.info();
+
+	Graduate graduate("Einstein", "Albert", 1992, 03, 05, "programmer", "pv225", 5, 100, "OOP");
+	graduate.info();
+#endif // INHERITANCE_CHECK
+
+	Human* group[] =
+	{
+	new Student("Pinkman","Jessie", 1990,03,04,"Chemistry","WW_220",90, 95),
+	new Teacher("White", "Walter", 1960,9, 20, "Chemistry", 25),
+	new Graduate("Schreder","Hank",1970,06,07,"Criminalistics","WW_220",75, 80,"How to catch Heizenberg"),
+	new Student("Vercetty","Tomas", 1970,05,25,"Criminalistics","Vice",90,95),
+	new Teacher("Diaz","Ricardo",1960,03,03,"Weapons distribution",20)
+	};
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		group[i]->info();
+		cout << "\n------------------------------------------------\n";
+	}
+	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	{
+		delete group[i];
+	}
 }
+
