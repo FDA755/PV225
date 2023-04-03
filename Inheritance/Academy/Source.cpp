@@ -3,6 +3,7 @@
 #include<iostream>
 #include<string>
 #include<ctime>
+#include<fstream>
 using namespace std;
 
 #define HUMAN_TAKE_PARAMETERS const std::string& last_name, const std::string& first_name, int year, int month, int day
@@ -13,6 +14,10 @@ class Human
 	std::string last_name;
 	std::string first_name;
 	tm birth_date;				//tm-timepoint
+protected:
+	static const int LAST_NAME_WIDTH = 15;
+	static const int FIRST_NAME_WIDTH = 10;
+	static const int SPECIALTY_WIDTH = 22;
 public:
 	const std::string& get_last_name()const
 	{
@@ -65,7 +70,38 @@ public:
 	//	----------------------------------------------------  Methods:
 	virtual std::ostream& info(std::ostream& os)const
 	{
-		return os << last_name << " " << first_name << " " << get_age() << " ";
+		os.width(LAST_NAME_WIDTH);
+		os << left;
+		os << last_name;
+		os.width(FIRST_NAME_WIDTH);
+		os << first_name;
+		os.width(3);
+		os << get_age();
+		return os;
+		//return os << last_name << " " << first_name << " " << get_age() << " ";
+	}
+	virtual std::ofstream& info(std::ofstream& ofs)const
+	{
+		ofs.width(LAST_NAME_WIDTH);
+		ofs << left;
+		ofs << last_name;
+		ofs.width(FIRST_NAME_WIDTH);
+		ofs << first_name;
+		//ofs.width(12);
+		ofs << birth_date.tm_year + 1900 << ".";
+		ofs << birth_date.tm_mon + 1 << ".";
+		ofs << birth_date.tm_mday<<"\t";
+		return ofs;
+		//return os << last_name << " " << first_name << " " << get_age() << " ";
+	}
+	virtual std::ifstream& scan(std::ifstream& ifs)
+	{
+		ifs >> last_name >> first_name;
+		ifs >> birth_date.tm_year;	ifs.ignore();
+		ifs >> birth_date.tm_mon;	ifs.ignore();
+		ifs	>> birth_date.tm_mday;	ifs.ignore();
+			birth_date.tm_year -= 1900;
+			return ifs;
 	}
 };
 
@@ -73,12 +109,21 @@ std::ostream& operator<<(std::ostream& os, const Human& obj)
 {
 	return obj.info(os);
 }
+std::ofstream& operator<<(std::ofstream& ofs, const Human& obj)
+{
+	return obj.info(ofs);
+}
+std::ifstream& operator>>(std::ifstream& ifs, Human& obj)
+{
+	return obj.scan(ifs);
+}
 
 #define STUDENT_TAKE_PARAMETERS const std::string& specialty, const std::string& group, double rating, double attendance
 #define STUDENT_GIVE_PARAMETERS specialty, group, rating, attendance
 
 class Student : public Human
 {
+	static const int GROUP_WIDTH = 8;
 	std::string specialty;
 	std::string group;
 	double rating;
@@ -138,10 +183,48 @@ public:
 	{
 		cout << "SDestructor:\t" << this << endl;
 	}
-	std::ostream& info(std::ostream& os)const
+	std::ostream& info(std::ostream& os)const override
 	{
-		;
-		return Human::info(os) << specialty << " " << group << " " << rating << " " << attendance << " ";
+		Human::info(os);
+		os << left;
+		os.width(SPECIALTY_WIDTH);
+		os << specialty;
+		os.width(GROUP_WIDTH);
+		os << group;
+		os.width(GROUP_WIDTH);
+		os << rating;
+		os.width(GROUP_WIDTH);
+		os << attendance;
+		return os;
+		//return Human::info(os) << specialty << " " << group << " " << rating << " " << attendance << " ";
+	}
+	std::ifstream& scan(std::ifstream& ifs)override
+	{
+		Human::scan(ifs);
+		char buffer[SPECIALTY_WIDTH + 1] = {};
+		ifs.read(buffer, SPECIALTY_WIDTH);
+		//Удаляем лишние пробелы в конце строки:
+		for (int i = SPECIALTY_WIDTH - 1; buffer[i] == ' '; i--)buffer[i] = 0;
+		this->specialty = buffer;
+		ifs >> group;
+		ifs >> rating;
+		ifs >> attendance;
+		return ifs;
+	}
+	std::ofstream& info(std::ofstream& ofs)const override
+	{
+		Human::info(ofs);
+		ofs << left;
+		ofs.width(SPECIALTY_WIDTH);
+		ofs << specialty;
+		ofs.width(GROUP_WIDTH);
+		ofs << group;
+		ofs.width(GROUP_WIDTH);
+		ofs << rating;
+		ofs.width(GROUP_WIDTH);
+		ofs << attendance;
+		return ofs;
+		//return Human::info(os) << specialty << " " << group << " " << rating << " " << attendance << " ";
 	}
 };
 
@@ -150,6 +233,7 @@ public:
 
 class Teacher : public Human
 {
+	static const int EXPERIENCE_WIDTH = 3;
 	std::string specialty;
 	unsigned int experience;
 public:
@@ -182,8 +266,33 @@ public:
 	}
 	std::ostream& info(std::ostream& os)const
 	{
-		
-		return Human::info(os) << specialty << " " << experience <<" лет. ";
+		Human::info(os);
+		os.width(25);
+		os << specialty;
+		os.width(3);
+		os << experience;
+		return os;
+		//return Human::info(os) << specialty << " " << experience <<" лет. ";
+	}
+	std::ifstream& scan(std::ifstream& ifs)override
+	{
+		Human::scan(ifs);
+		char buffer[SPECIALTY_WIDTH + 1] = {};
+		ifs.read(buffer, SPECIALTY_WIDTH);
+		for (int i = SPECIALTY_WIDTH - 1; buffer[i] = ' '; i--)buffer[i] = 0;
+		specialty = buffer;
+		ifs >> experience;
+		return ifs;
+	}
+	std::ofstream& info(std::ofstream& ofs)const
+	{
+		Human::info(ofs);
+		ofs.width(SPECIALTY_WIDTH);
+		ofs << specialty;
+		ofs.width(EXPERIENCE_WIDTH);
+		ofs << experience;
+		return ofs;
+		//return Human::info(os) << specialty << " " << experience <<" лет. ";
 	}
 };
 
@@ -213,11 +322,94 @@ public:
 	{
 		return Student::info(os)<< subject ;
 	}
+	std::ifstream& scan(std::ifstream& ifs)override
+	{
+		Student::scan(ifs);
+		std::getline(ifs, subject);
+		return ifs;
+	}
+	std::ofstream& info(std::ofstream& ofs)const override
+	{
+			Student::info(ofs) << subject;
+			return ofs;
+	}
 };	
 
+template<typename T>void print(T group[], const int n)
+{
+	for (int i = 0; i < n; i++)
+	{
+		//group[i]->info();
+		cout << *group[i] << endl;
+		cout << "\n------------------------------------------------\n";
+	}
+}
+template<typename T>void save(T group[], const int n, const char* filename)
+{
+	//std::ofstream fout("group.txt");
+	std::ofstream fout(filename);
+	for (int i = 0; i < n; i++)
+	{
+		//group[i]->info();
+		fout << typeid(*group[i]).name() << ":\t";
+		fout << *group[i] << endl;
+
+	}
+	fout.close();
+}
+Human* HumanFactory(const std::string& type)
+{
+	if (type.find("Student") != std::string::npos)return new Student("", "", 0, 0, 0, "", "", 0, 0);
+	if (type.find("Teacher") != std::string::npos)return new Teacher("", "", 0, 0, 0, "", 0);
+	if (type.find("Graduate") != std::string::npos)return new Graduate("", "", 0, 0, 0, "", "", 0, 0, "");
+}
+Human** load(int& n, const char* filename)
+{
+	Human** group = nullptr;
+	std::ifstream fin(filename);
+	if (fin.is_open())
+	{
+		//  TODO: read form file
+		//1) Определяем количество участников группы
+		std::string buffer;
+		while (!fin.eof())
+		{
+			buffer.clear();
+			std::getline(fin, buffer);
+			if (buffer.size() == 0)continue;
+			n++;
+		}
+		cout << "В группе " << n << " участников\n";
+		//2) Выделяем память под массив:
+		group = new Human * [n] {};
+
+		//3) Возвращаемся в начало файла, чтобы загрузить строки в массив:
+		cout << "Текущая позиция курсора после чтения файла: " << fin.tellg() << endl;
+		fin.clear();
+		fin.seekg(0);
+		cout << "Теперь курсор должен вернуться в начало файла: " << fin.tellg() << endl;
+		//4) Выполняем чтение файла и загрузку оббъектов в массив:
+		for (int i = 0; i < n; i++)
+		{
+			std::string type;
+			std::getline(fin, type, ':');
+			if (type.empty())continue;
+			group[i] = HumanFactory(type);
+			fin.ignore();
+			fin >> *group[i];
+		}
+		fin.close();
+	}
+	else
+	{
+		std::cerr << "Error: file not found" << endl;
+	}
+	return group;
+}
 
 //#define TIME_CHECK
 //#define INHERITANCE_CHECK
+//#define POLIMORPHISM_CHECK
 
 void main()
 {
@@ -247,6 +439,7 @@ void main()
 	graduate.info();
 #endif // INHERITANCE_CHECK
 
+#ifdef POLIMORPHISM_CHECK
 	Human* group[] =
 	{
 	new Student("Pinkman","Jessie", 1990,03,04,"Chemistry","WW_220",90, 95),
@@ -255,15 +448,30 @@ void main()
 	new Student("Vercetty","Tomas", 1970,05,25,"Criminalistics","Vice",90,95),
 	new Teacher("Diaz","Ricardo",1960,03,03,"Weapons distribution",20)
 	};
-	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
-	{
-		//group[i]->info();
-		cout << *group[i] << endl;
-		cout << "\n------------------------------------------------\n";
-	}
+
+	char filename[] = "group.txt";
+
+	//for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
+	//{
+	//	//group[i]->info();
+	//	cout << *group[i] << endl;
+	//	cout << "\n------------------------------------------------\n";
+	//}
+	print(group, sizeof(group) / sizeof(group[0]));
+	save(group, sizeof(group) / sizeof(group[0]), filename);
+
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		delete group[i];
 	}
+
+	char sz_command[_MAX_FNAME] = "notepad ";
+	strcat_s(sz_command, _MAX_FNAME, filename);
+	system(sz_command);
+#endif // POLIMORPHISM_CHECK
+
+	int n = 0;
+	Human** group = load(n, "group.txt");
+	print(group, n);
 }
 
