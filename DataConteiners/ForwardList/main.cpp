@@ -175,6 +175,7 @@ public:
 
 //#define BASE_CHECK
 //#define RANGED_BASE_FOR_FOR_ARRYA
+#define HOME_WORK_1
 
 void main()
 {
@@ -229,6 +230,7 @@ void main()
 	cout << endl;
 #endif // RANGED_BASE_FOR_FOR_ARRYA
 
+#ifdef HOME_WORK_1
 	Forwardlist list = { 3,5,8,13,21 };
 	//list.print();
 	for (int i : list)
@@ -236,4 +238,14 @@ void main()
 		cout << i << tab;
 	}
 	cout << endl;
+
+	Forwardlist list2 = { 33,55,89 };
+	for (int i : list2)cout << i << tab; cout << endl;
+
+	Forwardlist list3 = list + list2;
+	for (int i : list3)cout << i << tab; cout << endl;
+#endif // HOME_WORK_1
+
+
+
 }
