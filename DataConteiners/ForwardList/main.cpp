@@ -1,6 +1,9 @@
 //ForwardList
 #include <iostream>
 using namespace std;
+using std::cout;
+using std::cin;
+using std::endl;
 
 #define tab "\t"
 
@@ -21,20 +24,69 @@ public:
 		cout << "EDestructor:\t" << this << endl; 
 	}
 	friend class Forwardlist;
+	friend class Iterator;
 };
  int Element::count = 0; //Инициализируем статическую переменную, объявленную в классе 'Element'
+
+ class Iterator
+ {
+	 Element* Temp;
+ public:
+	 Iterator(Element* Temp = nullptr) :Temp(Temp)
+	 {
+		 cout << "ItConstructor:\t " << this << endl;
+	 }
+	 ~Iterator()
+	 {
+		 cout << "ItConstructor:\t " << this << endl;
+	 }
+	 Iterator& operator++()
+	 {
+		 Temp = Temp->pNext;
+		 return *this;
+	 }
+	 bool operator==(const Iterator& other)const
+	 {
+		 return this->Temp == other.Temp;
+	 }
+	 bool operator!=(const Iterator& other)const
+	 {
+		 return this->Temp != other.Temp;
+	 }
+	 int& operator*()
+	 {
+		 return Temp->Data;
+	 }
+ };
 
 class Forwardlist //Forward - односвязный, однонаправленный список
 {
 	Element* Head; //Голова списка - содержит указатель на нулевой элемент списка
 	int size;
 public:
+	Iterator begin()
+	{
+		return Head;
+	}
+	Iterator end()
+	{
+		return nullptr;
+	}
 	Forwardlist()
 		{
 			Head = nullptr; //Если список пуст, его голова указывает на ноль.
 			size = 0;
 			cout << "LConstructor:\t" << this << endl;
 		}
+	Forwardlist(const std::initializer_list<int>& il) :Forwardlist()
+	{
+		// il -сокращенно initializer_list
+		cout << typeid(il.begin()).name() << endl;
+		for (int const* it = il.begin(); it != il.end(); it++)
+		{
+			push_back(*it);
+		}
+	}
 	~Forwardlist()
 	{
 		while (Head)pop_front();
@@ -54,7 +106,7 @@ public:
 	}
 	void push_back(int Data)
 	{
-		/*if (Head == nullptr)return push_front(Data);
+		if (Head == nullptr)return push_front(Data);
 		Element* New = new Element(Data);   //1) Создаем новый элемент списка
 		Element* Temp = Head;
 		while (Temp->pNext)   //2)Доходим до конца списка
@@ -62,8 +114,9 @@ public:
 		//3) добавляем элемент в конец списка
 		Temp->pNext = New;
 		//Temp->Data = New->Data;
-		//New -> pNext = nullptr;  */
-		Head = new Element(Data, Head);
+		//New -> pNext = nullptr;  
+		
+		//Head = new Element(Data, Head);
 		size++;
 	}
 	void insert(int index, int Data)
@@ -107,7 +160,7 @@ public:
 	//															Methods:
 	void print()const
 	{
-		/*Element* Temp = Head;    //Temp - эот итератор. Это указательль, при помози котороо можно получить доступ к элементам структуры данных
+		/*Element* Temp = Head;    //Temp - это итератор. Это указательль, при помощи котороо можно получить доступ к элементам структуры данных
 		while (Temp)
 		{
 			cout << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
@@ -120,9 +173,13 @@ public:
 	}
 };
 
+//#define BASE_CHECK
+//#define RANGED_BASE_FOR_FOR_ARRYA
+
 void main()
 {
 	setlocale(LC_ALL, "");
+#ifdef BASE_CHECK
 	int n;
 	cout << "Введите размер списка: "; cin >> n;
 	Forwardlist list;
@@ -140,7 +197,7 @@ void main()
 	int value;
 	int index;
 	cout << "Введите индекс добавляемого элемента: "; cin >> index;
-	cout << "Введите значение добавляемого элемента: "; cin >>value;
+	cout << "Введите значение добавляемого элемента: "; cin >> value;
 	list.insert(index, value);
 	list.print();
 
@@ -156,6 +213,27 @@ void main()
 	cout << "Введите значение добавляемого элемента: "; cin >> value;
 	list.erase(index);
 	list.print();*/
+#endif // BASE_CHECK
 
+#ifdef RANGED_BASE_FOR_FOR_ARRYA
+	int arr[] = { 3,5,8,13,21 };
+	//for (int i = 0; i < sizeof(arr)/sizeof(int); i++)
+	//{
+	//	cout << arr[i] << tab;
+	//}
+	//cout << endl;
+	for (int i : arr)   //Range-based FOR -			for для диапазона (контейнера)
+	{
+		cout << i << tab;
+	}
+	cout << endl;
+#endif // RANGED_BASE_FOR_FOR_ARRYA
 
+	Forwardlist list = { 3,5,8,13,21 };
+	//list.print();
+	for (int i : list)
+	{
+		cout << i << tab;
+	}
+	cout << endl;
 }
