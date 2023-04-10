@@ -1,4 +1,4 @@
-#include<iostream>
+п»ї#include<iostream>
 using namespace std;
 
 #define tab "\t"
@@ -228,7 +228,7 @@ public:
 	}
 	List(const std::initializer_list<T>& il) :List()
 	{
-		for (int const* it = il.begin(); it != il.end(); ++it)
+		for (T const* it = il.begin(); it != il.end(); ++it)
 		{
 			push_back(*it);
 		}
@@ -249,12 +249,12 @@ public:
 			size++;
 			return;
 		}
-		//Element* New = new Element(Data);	//1) Создали элемент
+		//Element* New = new Element(Data);	//1) РЎРѕР·РґР°Р»Рё СЌР»РµРјРµРЅС‚
 		//New->pNext = Head;					//
 		//Head->pPrev = New;					//	
 		//Head = New;							//4)
 		//size++;
-		//Element* New = new Element(Data,Head);	//1) Создали элемент
+		//Element* New = new Element(Data,Head);	//1) РЎРѕР·РґР°Р»Рё СЌР»РµРјРµРЅС‚
 		//New->pNext = Head;					//
 		Head = Head->pPrev = new Element(Data, Head);					//	
 		//New;							//4)
@@ -268,7 +268,7 @@ public:
 			size++;
 			return;
 		}
-		//Element* New = new Element(Data);	//1) Создали элемент
+		//Element* New = new Element(Data);	//1) РЎРѕР·РґР°Р»Рё СЌР»РµРјРµРЅС‚
 		//New->pNext = nullptr;	
 		//New->pPrev = Tail;//
 		//Tail->pNext = New;					//	
@@ -291,11 +291,11 @@ public:
 			Head = Tail = nullptr;
 			return;
 		}
-		//1) Исключаем элемент:
+		//1) РСЃРєР»СЋС‡Р°РµРј СЌР»РµРјРµРЅС‚:
 		Head = Head->pNext;
-		//2)Удаляем элемент из памяти:
+		//2)РЈРґР°Р»СЏРµРј СЌР»РµРјРµРЅС‚ РёР· РїР°РјСЏС‚Рё:
 		delete Head->pPrev;
-		//3)Обнуляем адресс удаленного элемента:
+		//3)РћР±РЅСѓР»СЏРµРј Р°РґСЂРµСЃСЃ СѓРґР°Р»РµРЅРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°:
 		Head->pPrev = nullptr;
 		size--;
 	}
@@ -308,12 +308,12 @@ public:
 			Head = Tail = nullptr;
 			return;
 		}
-		//1) Исключаем элемент:
+		//1) РСЃРєР»СЋС‡Р°РµРј СЌР»РµРјРµРЅС‚:
 		Element* Temp = Tail->pPrev;
 		Tail = Tail->pPrev;
-		//2)Удаляем элемент из памяти:
+		//2)РЈРґР°Р»СЏРµРј СЌР»РµРјРµРЅС‚ РёР· РїР°РјСЏС‚Рё:
 		delete Tail->pNext;
-		//3)Обнуляем адресс удаленного элемента:
+		//3)РћР±РЅСѓР»СЏРµРј Р°РґСЂРµСЃСЃ СѓРґР°Р»РµРЅРЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°:
 		Tail->pNext = nullptr;
 		size--;	
 	}
@@ -321,12 +321,12 @@ public:
 	{
 		//if (index == 0)return push_front(Data);
 		//if (index > size)return;
-		////1)Создаем новый элемент:
+		////1)РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚:
 		//Element* New = new Element(Data);
-		////2)Доходим до нужного элемента:
+		////2)Р”РѕС…РѕРґРёРј РґРѕ РЅСѓР¶РЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°:
 		//Element* Temp = Head;
 		//for (int i = 0; i < index - 1; i++)Temp = Temp->pNext;
-		////3)Вставляем новый элемент в список:
+		////3)Р’СЃС‚Р°РІР»СЏРµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚ РІ СЃРїРёСЃРѕРє:
 		//New->pNext = Temp->pNext;
 		//Temp->pNext = New;
 		//New->pPrev = Temp;
@@ -357,12 +357,12 @@ public:
 	{
 		if (index == 0)return pop_front();
 		if (index > size)return;
-		//1)Создаем новый элемент:
+		//1)РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚:
 		//Element* Erased = new Element(Data);
-		//2)Доходим до нужного элемента:
+		//2)Р”РѕС…РѕРґРёРј РґРѕ РЅСѓР¶РЅРѕРіРѕ СЌР»РµРјРµРЅС‚Р°:
 		Element* Temp = Head;
 		for (int i = 0; i < index - 1; i++)Temp = Temp->pNext;
-		//3)Вставляем новый элемент в список:
+		//3)Р’СЃС‚Р°РІР»СЏРµРј РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚ РІ СЃРїРёСЃРѕРє:
 		delete Temp->pPrev;
 		Temp->pPrev = Temp->pNext=Temp;
 		
@@ -380,7 +380,7 @@ public:
 		{
 			cout << Temp->pPrev << tab << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
 		}
-		cout << "Количество элементов списка: " << size << endl << endl;
+		cout << "РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ СЃРїРёСЃРєР°: " << size << endl << endl;
 	}
 	void reverse_print()const
 	{
@@ -388,7 +388,7 @@ public:
 		{
 			cout << Temp->pNext << tab << Temp << tab << Temp->Data << tab << Temp->pPrev << endl;
 		}
-		cout << "Количество элементов реверсивного списка: " << size << endl << endl;
+		cout << "РљРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ СЂРµРІРµСЂСЃРёРІРЅРѕРіРѕ СЃРїРёСЃРєР°: " << size << endl << endl;
 	}
 };
 
@@ -417,7 +417,7 @@ void main()
 	setlocale(LC_ALL, "");
 #ifdef BASE_CHECK
 	int n;
-	cout << "Введите размер списка: "; cin >> n;
+	cout << "Р’РІРµРґРёС‚Рµ СЂР°Р·РјРµСЂ СЃРїРёСЃРєР°: "; cin >> n;
 	List list;
 	for (int i = 0; i < n; i++)
 	{
@@ -432,12 +432,12 @@ void main()
 
 	int value;
 	int index;
-	cout << "Введите индекс добавляемого элемента: "; cin >> index;
-	cout << "Введите значение добавляемого элемента: "; cin >> value;
+	cout << "Р’РІРµРґРёС‚Рµ РёРЅРґРµРєСЃ РґРѕР±Р°РІР»СЏРµРјРѕРіРѕ СЌР»РµРјРµРЅС‚Р°: "; cin >> index;
+	cout << "Р’РІРµРґРёС‚Рµ Р·РЅР°С‡РµРЅРёРµ РґРѕР±Р°РІР»СЏРµРјРѕРіРѕ СЌР»РµРјРµРЅС‚Р°: "; cin >> value;
 	list.insert(index, value);
 	list.print();
 	list.erase(index);
-	cout << "Введите индекс удаляемого элемента: "; cin >> index;
+	cout << "Р’РІРµРґРёС‚Рµ РёРЅРґРµРєСЃ СѓРґР°Р»СЏРµРјРѕРіРѕ СЌР»РµРјРµРЅС‚Р°: "; cin >> index;
 	list.print();
 #endif // BASE_CHECK
 
@@ -455,4 +455,10 @@ void main()
 	for (List<int>::ReverseIterator rit = list.rbegin();rit!=list.rend();rit++)*rit/= 10;
 	reverse_print(list);
 
+	List<double> list2 = { 0.5,0.4,1.23 };
+	for (double i : list2)
+	{
+		cout << i << tab;
+	}
+	cout << endl;
 }
