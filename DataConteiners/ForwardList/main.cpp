@@ -72,6 +72,14 @@ public:
 	{
 		return nullptr;
 	}
+	const Iterator begin()const
+	{
+		return Head;
+	}
+	const Iterator end()const
+	{
+		return nullptr;
+	}
 	Forwardlist()
 		{
 			Head = nullptr; //Если список пуст, его голова указывает на ноль.
@@ -85,6 +93,13 @@ public:
 		for (int const* it = il.begin(); it != il.end(); it++)
 		{
 			push_back(*it);
+		}
+	}
+	Forwardlist(const Forwardlist& other)
+	{
+		for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
+		{
+			push_back(Temp->Data);
 		}
 	}
 	~Forwardlist()
@@ -172,6 +187,14 @@ public:
 		cout << "Обзее количество элементов списка: " << Element::count << endl;
 	}
 };
+
+Forwardlist operator+(const Forwardlist& left, const Forwardlist& right)
+{
+	Forwardlist cat;
+	for (Iterator it = left.begin(); it != left.end(); ++it)cat.push_back(*it);
+	for (Iterator it = right.begin(); it != right.end(); ++it)cat.push_back(*it);
+	return cat;
+}
 
 //#define BASE_CHECK
 //#define RANGED_BASE_FOR_FOR_ARRYA
