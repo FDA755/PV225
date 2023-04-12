@@ -1,6 +1,9 @@
 ﻿#include<iostream>
 #include<array>
 #include<vector>
+#include<deque>
+#include<list>
+#include<iterator>
 using std::cin;
 using std::cout;
 using std::endl;
@@ -16,7 +19,9 @@ template<typename T>void vector_properties(const std::vector<T>& vec)
 }
 
 //#define STL_ARRAY
-#define STL_VECTOR
+//#define STL_VECTOR
+//#define STL_DEQUE
+#define stl_list
 
 void main()
 {
@@ -41,7 +46,7 @@ void main()
 		cout << vec.at(i) << tab;
 	}
 	cout << endl;
-	vector_properties(vec);
+	/*vector_properties(vec);
 	cout << delimiter << endl;
 	std::vector<int> vec2(100);
 	vector_properties(vec2);
@@ -58,8 +63,49 @@ void main()
 	vec.reserve(255);
 	vec.resize(8);
 	for (int i : vec)cout << i << tab; cout << endl;
-	vector_properties(vec);
+	vector_properties(vec);*/
+
+	int index, value, count;
+	cout << "Введите индекс добавляемого элемента: "; cin >> index;
+	cout << "Введите количество добавляемых элементов: "; cin >> count;
+	cout << "Введите  добавляемоe значения: "; cin >> value;
+	vec.insert(vec.begin()+ index, count, value);
+	for (int i : vec)cout << i << tab; cout << endl;
+
 #endif // STL_VECTOR
+#ifdef STL_DEQUE
+	std::deque<int> deque = { 3,5,8,13,21 };
+	for (int i = 0; i < deque.size(); i++)
+	{
+		cout << deque[i] << tab;
+	}
+	cout << endl;
+	deque.push_front(2);
+	deque.push_back(334);
+	for (int i : deque)cout << i << tab; cout << endl;
+#endif // STL_DEQUE
+#ifdef stl_list
+	std::list<int> list = { 3,5,8,13,21 };
+	for (std::list<int>::iterator it=list.begin(); it!=list.end(); ++it)
+		{
+		cout << *it << tab;
+	}
+	cout<<endl;
+	for (std::list<int>::reverse_iterator rit = list.rbegin(); rit != list.rend(); ++rit)
+	{
+		cout << *rit << tab;
+	}
+	cout << endl;
+	int index, value;
+	cout << "Введите индекс добавляемого элемента: "; cin >> index;
+	//cout << "Введите количество добавляемых элементов: "; cin >> count;
+	cout << "Введите  добавляемоe значения: "; cin >> value;
+	std::list<int>::iterator position = list.begin();
+	//for (int i = 0; i < index; i++)++position;
+	std::advance(position, index);	
+	list.insert(position, value);
+	for (int i : list)cout << i << tab; cout << endl;
+#endif // stl_list
 
 
 
